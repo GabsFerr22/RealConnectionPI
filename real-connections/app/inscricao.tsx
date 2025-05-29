@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Dimensions, Picker, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Dimensions, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 
 const { height } = Dimensions.get('window');
@@ -16,7 +16,7 @@ export default function Inscricao() {
 
   const handleSignUp = async () => {
     try {
-      const response = await fetch('http://192.168.1.70:3001/usuarios/registrar', {
+      const response = await fetch('https://realconnectionpi-production.up.railway.app/usuarios/registrar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

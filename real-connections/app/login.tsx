@@ -9,6 +9,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useAuth } from '../context/authContext';
 
 const { height } = Dimensions.get('window');
 
@@ -18,31 +19,47 @@ export default function Login() {
   const [senha, setSenha] = useState('');
   const [crm, setCrm] = useState('');
   const [isPsychologist, setIsPsychologist] = useState(false);
+  const { setUser } = useAuth();
 
   const handleLogin = async () => {
-    const loginBody = isPsychologist ? { crm, senha } : { email, senha };
-    const endpoint = isPsychologist ? '/psicologos/login' : '/usuarios/login';
+  const loginBody = isPsychologist
+    ? { crm, senha, tipo: 'psicologo' }
+    : { email, senha, tipo: 'familia' };
+  const endpoint = '/usuarios/login';
 
-    try {
-      const response = await fetch(`http://localhost:3001${endpoint}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(loginBody),
-      });
+  try {
+    const response = await fetch(`https://realconnectionpi-production.up.railway.app${endpoint}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(loginBody),
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (response.ok) {
-        alert('Login bem-sucedido!');
-        router.replace('../tabs/comunidade');
+    if (response.ok) {
+
+      setUser({
+          id: data.id,
+          nome: data.nome,
+          tipo: data.tipo,
+          email: data.email,
+          crm: data.crm,
+        });
+        
+      alert('Login bem-sucedido!');
+      if (isPsychologist) {
+        router.replace('../tabsPsicologo/home');
       } else {
-        alert(data.erro || 'Erro ao fazer login');
+        router.replace('../tabs/comunidade');
       }
-    } catch (error) {
-      console.error(error);
-      alert('Erro na requisição');
+    } else {
+      alert(data.error || 'Erro ao fazer login');
     }
-  };
+  } catch (error) {
+    console.error(error);
+    alert('Erro na requisição');
+  }
+};
 
   return (
     <View style={styles.container}>

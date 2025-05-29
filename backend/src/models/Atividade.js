@@ -1,14 +1,37 @@
+const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-exports.createAtividade = async (psicologo_id, titulo, descricao, pontuacao) => {
-  const [rows] = await db.execute(
-    'INSERT INTO atividades (id, psicologo_id, titulo, descricao, pontuacao) VALUES (UUID(), ?, ?, ?, ?)',
-    [psicologo_id, titulo, descricao, pontuacao]
-  );
-  return rows;
-};
+const Atividade = db.define('Atividade', {
+  id: {
+    type: DataTypes.UUID,
+    primaryKey: true,
+    defaultValue: DataTypes.UUIDV4,
+  },
+  titulo: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  descricao: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+  pontos: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  },
+ data: {
+  type: DataTypes.DATEONLY,
+  allowNull: false,
+},
+  criado_por: {
+    type: DataTypes.UUID,
+    allowNull: false,
+  },
+}, {
+  tableName: 'atividades',
+  createdAt: 'criado_em',
+  updatedAt: false,
+});
 
-exports.getAtividades = async () => {
-  const [rows] = await db.execute('SELECT * FROM atividades');
-  return rows;
-};
+module.exports = { Atividade };

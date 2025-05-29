@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Dimensions, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  Dimensions,
+  ScrollView,
+  ActivityIndicator,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 
 const { height } = Dimensions.get('window');
@@ -13,8 +23,26 @@ export default function Inscricao() {
   const [userType, setUserType] = useState<'familia' | 'psicologo'>('familia');
   const [quantidadePessoas, setQuantidadePessoas] = useState('');
   const [nomeDependente, setNomeDependente] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSignUp = async () => {
+    if (!nome || !email || !senha) {
+      alert('Preencha todos os campos obrigatórios.');
+      return;
+    }
+
+    if (userType === 'psicologo' && !crm) {
+      alert('Informe seu CRM.');
+      return;
+    }
+
+    if (userType === 'familia' && (!quantidadePessoas || !nomeDependente)) {
+      alert('Preencha os dados do dependente e quantidade de pessoas na família.');
+      return;
+    }
+
+    setLoading(true);
+
     try {
       const response = await fetch('https://realconnectionpi-production.up.railway.app/usuarios/registrar', {
         method: 'POST',
@@ -25,6 +53,8 @@ export default function Inscricao() {
           senha,
           tipo: userType,
           crm: userType === 'psicologo' ? crm : undefined,
+          quantidadePessoas: userType === 'familia' ? quantidadePessoas : undefined,
+          dependente: userType === 'familia' ? { nome: nomeDependente } : undefined,
         }),
       });
 
@@ -39,6 +69,8 @@ export default function Inscricao() {
     } catch (error) {
       console.error(error);
       alert('Erro na requisição');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -57,19 +89,47 @@ export default function Inscricao() {
         <TextInput style={styles.input} placeholder="Nome" value={nome} onChangeText={setNome} />
 
         <Text style={styles.label}>Email</Text>
-        <TextInput style={styles.input} placeholder="exemplo@gmail.com" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
+        <TextInput
+          style={styles.input}
+          placeholder="exemplo@gmail.com"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
 
-        <Text style={styles.label}>Parentesco com a pessoa dependente</Text>
-        <TextInput style={styles.input} placeholder="Ex: Pai, Mãe" />
+        {userType === 'familia' && (
+          <>
+            <Text style={styles.label}>Parentesco com a pessoa dependente</Text>
+            <TextInput style={styles.input} placeholder="Ex: Pai, Mãe" />
 
-        <Text style={styles.label}>Quantidade de pessoas na família</Text>
-        <TextInput style={styles.input} placeholder="Ex: 2 pessoas" value={quantidadePessoas} onChangeText={setQuantidadePessoas} />
+            <Text style={styles.label}>Quantidade de pessoas na família</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Ex: 2 pessoas"
+              value={quantidadePessoas}
+              onChangeText={setQuantidadePessoas}
+              keyboardType="numeric"
+            />
 
-        <Text style={styles.label}>Nome do dependente</Text>
-        <TextInput style={styles.input} placeholder="Nome completo do dependente" value={nomeDependente} onChangeText={setNomeDependente} />
+            <Text style={styles.label}>Nome do dependente</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Nome completo do dependente"
+              value={nomeDependente}
+              onChangeText={setNomeDependente}
+            />
+          </>
+        )}
 
         <Text style={styles.label}>Senha</Text>
-        <TextInput style={styles.input} placeholder="Senha" value={senha} onChangeText={setSenha} secureTextEntry />
+        <TextInput
+          style={styles.input}
+          placeholder="Senha"
+          value={senha}
+          onChangeText={setSenha}
+          secureTextEntry
+        />
 
         <View style={styles.toggleContainer}>
           <TouchableOpacity onPress={() => setUserType('familia')}>
@@ -81,11 +141,23 @@ export default function Inscricao() {
         </View>
 
         {userType === 'psicologo' && (
-          <TextInput style={styles.input} placeholder="CRM" value={crm} onChangeText={setCrm} />
+          <>
+            <Text style={styles.label}>CRM</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="CRM"
+              value={crm}
+              onChangeText={setCrm}
+            />
+          </>
         )}
 
-        <TouchableOpacity style={styles.button} onPress={handleSignUp}>
-          <Text style={styles.buttonText}>Concluir</Text>
+        <TouchableOpacity style={styles.button} onPress={handleSignUp} disabled={loading}>
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Concluir</Text>
+          )}
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => router.push('/login')}>
@@ -152,6 +224,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 20,
     alignItems: 'center',
+    opacity: 1,
   },
   buttonText: {
     color: 'white',

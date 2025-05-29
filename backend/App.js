@@ -28,7 +28,7 @@ const atividadeRoutes = require('./src/routes/AtividadeRoutes');
 const progressoRoutes = require('./src/routes/ProgressoRoutes');
 const premioRoutes = require('./src/routes/PremioRoutes');
 const resgateRoutes = require('./src/routes/ResgateRoutes');
-const postRoutes = require('./src/routes/PostRoutes'); 
+const postsRoutes = require('./src/routes/postsRoutes'); 
 
 app.use('/usuarios', usuarioRoutes);
 app.use('/dependentes', dependenteRoutes);
@@ -36,7 +36,7 @@ app.use('/atividades', atividadeRoutes);
 app.use('/progresso', progressoRoutes);
 app.use('/premios', premioRoutes);
 app.use('/resgates', resgateRoutes);
-app.use('/posts', postRoutes); 
+app.use('/posts', postsRoutes); 
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

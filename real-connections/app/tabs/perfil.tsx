@@ -220,7 +220,7 @@ export default function Perfil() {
         </ScrollView>
       </View>
 
-      {/* Modal para editar nome da família */}
+     
       <Modal visible={modalNomeVisivel} transparent animationType="slide">
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -244,7 +244,7 @@ export default function Perfil() {
         </View>
       </Modal>
 
-      {/* Modal para editar descrição */}
+      
       <Modal visible={modalVisivel} transparent animationType="slide">
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>

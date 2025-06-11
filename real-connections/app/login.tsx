@@ -75,7 +75,7 @@ export default function Login() {
         {isPsychologist ? (
           <TextInput
             style={styles.input}
-            placeholder="CRM"
+            placeholder="CRP"
             value={crm}
             onChangeText={setCrm}
           />

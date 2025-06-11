@@ -135,17 +135,15 @@ export default function Inscricao() {
           <TouchableOpacity onPress={() => setUserType('familia')}>
             <Text style={[styles.toggleText, userType === 'familia' && styles.activeToggle]}>Família</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setUserType('psicologo')}>
-            <Text style={[styles.toggleText, userType === 'psicologo' && styles.activeToggle]}>Psicólogo</Text>
-          </TouchableOpacity>
+        
         </View>
 
         {userType === 'psicologo' && (
           <>
-            <Text style={styles.label}>CRM</Text>
+            <Text style={styles.label}>CRP</Text>
             <TextInput
               style={styles.input}
-              placeholder="CRM"
+              placeholder="CRP"
               value={crm}
               onChangeText={setCrm}
             />
